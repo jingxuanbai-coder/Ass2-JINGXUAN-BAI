@@ -20,6 +20,17 @@ break. The terminal is the entire stage: no game engine, no framework.
 Requires **Python 3.12**. *Playing* a story also needs Rich; *checking* one needs
 nothing but Python itself.
 
+### macOS
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+python main.py story/observatory.json --play
+```
+
+### Windows (PowerShell)
+
 ```powershell
 # one-time setup
 & "$env:LOCALAPPDATA\Programs\Python\Python312\python.exe" -m venv .venv
