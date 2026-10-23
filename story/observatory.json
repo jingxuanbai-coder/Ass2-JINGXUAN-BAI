@@ -1,0 +1,260 @@
+{
+  "format": "branchline.story",
+  "format_version": 1,
+
+  "_note": [
+    "The demo story. One route in, through a gate that wants a key and will not",
+    "take an argument; one variable, which counts pages and drives the status",
+    "line; one item; and exactly three branch points -- the gate, the door, and",
+    "the desk inside. The prose is finished and the structure is the one the",
+    "project set out to build. Everything the reader sees is in this file."
+  ],
+
+  "start": "approach",
+
+  "meta": {
+    "title": "First Light",
+    "author": "Xuan",
+    "subtitle": "an abandoned observatory, after dark",
+    "title_card": [
+      "The last person to use this telescope left in a hurry,",
+      "and nobody has been up the lane since."
+    ]
+  },
+
+  "variables": {
+    "pages_read": {
+      "type": "int",
+      "initial": 0,
+      "label": "pages read",
+      "hud": true
+    }
+  },
+
+  "items": {
+    "brass_key": {
+      "name": "Small Brass Key",
+      "description": "Not much longer than your thumb. Worn smooth at the bow, where someone used to hold it every day.",
+      "art": "( o )"
+    }
+  },
+
+  "endings": {
+    "the_road_back": {
+      "title": "The Road Back",
+      "kind": "neutral",
+      "epilogue": [
+        "There is a wall where the lane meets the tarmac, and forty minutes before the bus.",
+        "You sit on it and look up. It costs nothing, and it is most of what you came for."
+      ]
+    },
+    "the_long_look": {
+      "title": "First Light",
+      "kind": "ambiguous",
+      "epilogue": [
+        "What you find in the eyepiece is not a discovery.",
+        "It is the same sky you have watched from your own garden a hundred times, and nothing in it has moved.",
+        "It is only that this is the first time it has looked back."
+      ]
+    },
+    "what_was_written": {
+      "title": "What Was Written",
+      "kind": "bitter",
+      "epilogue": [
+        "You read it twice. The second time is slower, and it says the same thing, and it stops in the same place.",
+        "Then you close the book, because it is not yours.",
+        "You put the corner of the ruled page back the way you found it, and you let yourself out, and you do not look up."
+      ]
+    }
+  },
+
+  "scenes": {
+    "approach": {
+      "title": "The End of the Lane",
+      "pace": "slow",
+      "body": [
+        "The bus leaves you where the tarmac gives up. After that it is a track, and after that it is a suggestion.",
+        "You walk the last kilometre with your hands in your pockets. Above the treeline the dome is still there, green with weather, and it is the only thing out here that was ever built to outlast somebody.",
+        { "text": "you have wanted to see this since you were eleven.", "style": "aside" }
+      ],
+      "choices": [
+        { "text": "Walk up to the gate", "to": "gate" }
+      ]
+    },
+
+    "gate": {
+      "title": "The Gate",
+      "pace": "normal",
+      "body": [
+        "The gate is taller than it needs to be. Beyond it the path climbs to the door in two bends, and neither bend has been swept in a long time.",
+        "The lock is the old kind: it wants a key, not a conversation."
+      ],
+      "variants": [
+        {
+          "when": { "has_item": "brass_key" },
+          "body": [
+            "The gate again, and the same two bends beyond it.",
+            "The key sits in your pocket with the weight of a small decision."
+          ]
+        }
+      ],
+      "on_enter": [
+        {
+          "when": { "first_time": true },
+          "do": [
+            {
+              "message": [
+                "There is a flowerbed along the outside of the fence, which is a strange place to put one."
+              ]
+            }
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "text": "Search the flowerbed",
+          "to": "flowerbed",
+          "when": { "not": { "has_item": "brass_key" } }
+        },
+        {
+          "text": "Push at the door",
+          "to": "door_refuses",
+          "when": { "not": { "has_item": "brass_key" } }
+        },
+        {
+          "text": "Unlock the gate",
+          "to": "vestibule",
+          "enabled_when": { "has_item": "brass_key" },
+          "locked_hint": "the lock wants something small and metal"
+        },
+        { "text": "Turn around and go home", "to": "leaving" }
+      ]
+    },
+
+    "flowerbed": {
+      "title": "The Flowerbed",
+      "pace": "slow",
+      "body": [
+        "Dead stems, mostly, and a lot of wet leaf litter. Nobody has planted anything here in years; it has simply kept going without help.",
+        "Under the stems your fingers close on something that is not a stem. Small, and cold, and cut with teeth along one edge."
+      ],
+      "on_enter": [
+        { "take": "brass_key" },
+        { "message": ["You put it in your pocket before you have decided anything."] }
+      ],
+      "choices": [
+        { "text": "Straighten up and go back to the gate", "to": "gate" }
+      ]
+    },
+
+    "door_refuses": {
+      "title": "The Door Does Not Care",
+      "pace": "fast",
+      "body": [
+        "You put your shoulder to it. It is not that the door is strong. It is that the door is not participating.",
+        "Below the handle there is a lock, and it is the old kind, and it has been waiting a long time for someone with the right idea."
+      ],
+      "choices": [
+        { "text": "Step back and look around", "to": "gate" }
+      ]
+    },
+
+    "vestibule": {
+      "title": "Inside",
+      "pace": "slow",
+      "body": [
+        "The air in here is colder than the air out there, which is not how it is supposed to work.",
+        "A stair spirals up into the dark of the dome. To your left, on a desk that someone left tidy, a logbook lies open.",
+        { "text": "the pages have not yellowed. the roof has held.", "style": "whisper" }
+      ],
+      "choices": [
+        { "text": "Climb to the telescope", "to": "telescope" },
+        { "text": "Read the open logbook", "to": "logbook" }
+      ]
+    },
+
+    "telescope": {
+      "title": "Up",
+      "pace": "slow",
+      "body": [
+        "The stairs are iron and they announce every step, and nothing comes up to see who it is.",
+        "The telescope is enormous, and it is pointed at nothing in particular — or rather, at wherever it was pointed when the last person here stopped."
+      ],
+      "choices": [
+        { "text": "Put your eye to it", "to": "the_long_look" }
+      ]
+    },
+
+    "logbook": {
+      "title": "The Logbook",
+      "pace": "slow",
+      "body": [
+        { "text": "A ruled page, filled in by hand: date, time, cloud, seeing.", "style": "letter" },
+        "Rain, then more rain, then a clear night, and then rain again. The hand is steady, and it goes on like this for months.",
+        "Somebody sat up here night after night in a cold room, writing down that nothing had happened."
+      ],
+      "variants": [
+        {
+          "when": { "var": "pages_read", "at_least": 2 },
+          "body": [
+            "The third page is in a different hand. Smaller, and slanted, and there are no columns on it at all.",
+            "It is written the way a letter is written — addressed to somebody, their name scratched out once and written in again — and it goes on down the page, and then it begins to hurry.",
+            "The writing stops in the middle of it. It does not start again anywhere else in the book."
+          ]
+        },
+        {
+          "when": { "var": "pages_read", "at_least": 1 },
+          "body": [
+            "On the second page the columns change. The weather goes on at the top of every entry, rain and rain and a clear night, and underneath it a second figure appears in the same steady hand.",
+            "It is not temperature and it is not rainfall. It rises, and drops, and rises, and it is written down every night without ever once being explained.",
+            { "text": "somebody was counting something that was not the weather.", "style": "whisper" }
+          ]
+        }
+      ],
+      "choices": [
+        {
+          "text": "Turn the page",
+          "to": "logbook",
+          "when": { "not": { "var": "pages_read", "at_least": 2 } },
+          "effects": [{ "inc": { "pages_read": 1 } }]
+        },
+        { "text": "Close the book", "to": "what_was_written" }
+      ]
+    },
+
+    "the_long_look": {
+      "title": "The Eyepiece",
+      "pace": "slow",
+      "body": [
+        "The wheel that moves it is stiff with old grease, and then it is not stiff, and then the whole thing swings more easily than anything that size has any right to.",
+        "You put your hands on it and lean, and it moves under the weight of you the way a door moves when it has been waiting to be opened.",
+        "You put your eye to the eyepiece."
+      ],
+      "ending": "the_long_look"
+    },
+
+    "what_was_written": {
+      "title": "Four Lines",
+      "pace": "slow",
+      "body": [
+        "You close the book, and then you open it again at the back, because there is a page you have not read and you already know you are going to.",
+        "The last page is not ruled. It is four lines, in the smaller hand, and it is addressed to somebody who is not you.",
+        { "text": "I have been counting them. For eleven months I have written the number at the foot of every page, and the number has only ever gone up.", "style": "letter" },
+        { "text": "I told you it was weather, and that was the first lie. You asked me what I was looking for and I said nothing, and that was the second.", "style": "letter" },
+        { "text": "It comes round again. I have run the numbers four times tonight and they come out the same every time, and what they come out at is", "style": "letter" },
+        { "text": "sooner than I have", "style": "letter" }
+      ],
+      "ending": "what_was_written"
+    },
+
+    "leaving": {
+      "title": "The Wall",
+      "pace": "normal",
+      "body": [
+        "You walk back down the track with your hands in your pockets, the way you came.",
+        "Behind you the dome keeps its place above the treeline. It does not get smaller nearly as fast as you would like, and you do not turn round to look at it, and after the second bend you cannot see it at all."
+      ],
+      "ending": "the_road_back"
+    }
+  }
+}

@@ -1,0 +1,5 @@
+# BranchLine has exactly one dependency that is not in the standard library.
+#
+# json, pickle, random, pathlib and unittest -- the rest of the project -- all
+# ship with Python itself, which keeps the piece runnable anywhere Python runs.
+rich==15.0.0

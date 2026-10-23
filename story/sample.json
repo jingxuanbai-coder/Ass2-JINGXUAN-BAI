@@ -1,0 +1,129 @@
+{
+  "format": "branchline.story",
+  "format_version": 1,
+
+  "_note": "A sample story, written to be read and then replaced. Everything in this folder is data: change it and the game changes, and no Python has to be touched. Keys beginning with an underscore are ignored, so they can be used as comments like this one.",
+
+  "start": "platform",
+
+  "meta": {
+    "title": "The Last Branch Line",
+    "author": "a sample",
+    "subtitle": "a story that exists to show the shape of a story",
+    "title_card": [
+      "This is a sample.",
+      "Replace this file. Nothing in the engine knows its name."
+    ]
+  },
+
+  "variables": {
+    "fare_paid": { "type": "bool", "initial": false },
+    "stops_passed": { "type": "int", "initial": 0, "label": "stops passed", "hud": true }
+  },
+
+  "items": {
+    "ticket": {
+      "name": "Punched Ticket",
+      "description": "Punched once, at a station that closed years ago.",
+      "art": "[##]"
+    }
+  },
+
+  "endings": {
+    "arrival": {
+      "title": "Arrival",
+      "kind": "ambiguous",
+      "epilogue": [
+        "The train stops. The doors open onto a platform that is not on any map you have seen."
+      ]
+    },
+    "return": {
+      "title": "Return",
+      "kind": "warm",
+      "epilogue": ["You get off where you got on, and the night is only a night again."]
+    }
+  },
+
+  "scenes": {
+    "platform": {
+      "title": "Platform Three",
+      "pace": "slow",
+      "body": [
+        "The departure board has been blank for eleven minutes.",
+        "\"Last branch line,\" the guard says, and does not look up."
+      ],
+      "choices": [
+        { "text": "Ask for a ticket", "to": "ticket_window" },
+        { "text": "Get on anyway", "to": "carriage" }
+      ]
+    },
+
+    "ticket_window": {
+      "title": "The Ticket Window",
+      "body": [
+        "The glass is scratched opaque. A hand pushes a ticket through without being asked."
+      ],
+      "on_enter": [{ "take": "ticket" }],
+      "choices": [
+        {
+          "text": "Pay for it",
+          "to": "carriage",
+          "effects": [{ "set": { "fare_paid": true } }]
+        },
+        { "text": "Leave it on the counter", "to": "platform" }
+      ]
+    },
+
+    "carriage": {
+      "title": "Carriage Seven",
+      "pace": "slow",
+      "body": ["Empty, except for the smell of rain on upholstery."],
+      "on_enter": [{ "inc": { "stops_passed": 1 } }],
+      "variants": [
+        {
+          "when": { "flag": "fare_paid" },
+          "body": ["Empty, and quiet in the way a room is quiet once you have paid for it."]
+        }
+      ],
+      "choices": [
+        {
+          "text": "Show the punched ticket to the guard",
+          "to": "terminus",
+          "id": "show_ticket",
+          "once": true,
+          "enabled_when": { "has_item": "ticket" },
+          "locked_hint": "you never bought one"
+        },
+        {
+          "text": "Ask the guard about the branch line",
+          "to": "guard",
+          "when": { "flag": "fare_paid" }
+        },
+        { "text": "Get off at the next stop", "to": "back" }
+      ]
+    },
+
+    "guard": {
+      "title": "The Guard",
+      "body": [
+        "\"It closed in eighty-seven,\" he says. \"Nobody told the timetable.\""
+      ],
+      "choices": [
+        { "text": "Ask him why he still runs it", "to": "terminus" },
+        { "text": "Say nothing", "to": "carriage" }
+      ]
+    },
+
+    "terminus": {
+      "title": "The Terminus",
+      "body": ["The train stops."],
+      "ending": "arrival"
+    },
+
+    "back": {
+      "title": "The Next Stop",
+      "body": ["The doors open onto your own platform, eleven minutes before you left."],
+      "ending": "return"
+    }
+  }
+}

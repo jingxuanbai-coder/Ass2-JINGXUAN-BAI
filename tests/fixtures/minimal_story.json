@@ -1,0 +1,194 @@
+{
+  "format": "branchline.story",
+  "format_version": 1,
+
+  "_note": "The happy-path fixture. It is not a good story and is not trying to be. Its job is to use every corner of the schema at least once, so that if the loader accepts this file it has accepted the whole language: all four condition families, both kinds of gate, every action verb, a variant, a connective scene that only falls through, and two endings.",
+
+  "start": "hall",
+
+  "meta": {
+    "title": "Fixture",
+    "author": "the test suite",
+    "subtitle": "a story that exists only to be loaded",
+    "title_card": ["Nothing here is meant to be read for pleasure."]
+  },
+
+  "variables": {
+    "lamps_lit": { "type": "int", "initial": 2, "label": "lamps lit", "hud": true },
+    "trusted": { "type": "bool", "initial": false },
+    "mood": { "type": "string", "initial": "wary" }
+  },
+
+  "items": {
+    "brass_key": {
+      "name": "Small Brass Key",
+      "description": "Cold, and worn smooth at the bow.",
+      "art": "( o )"
+    },
+    "oil_can": {
+      "name": "Oil Can",
+      "description": "Half full, and older than the stair."
+    }
+  },
+
+  "endings": {
+    "steady_light": {
+      "title": "Steady Light",
+      "kind": "warm",
+      "epilogue": ["Six lamps. The hall is a sentence again."]
+    },
+    "dark_tide": {
+      "title": "The Dark Tide",
+      "kind": "bitter",
+      "epilogue": ["The tide comes in over an unlit hall."]
+    }
+  },
+
+  "scenes": {
+    "hall": {
+      "title": "The Hall",
+      "pace": "slow",
+      "body": [
+        "A draught moves under the door.",
+        {
+          "text": "someone has been here tonight.",
+          "style": "aside",
+          "pace": "fast"
+        }
+      ],
+      "on_enter": [
+        {
+          "when": { "first_time": true },
+          "do": [{ "inc": { "lamps_lit": 1 } }]
+        },
+        {
+          "chance": {
+            "p": 0.5,
+            "then": [{ "message": ["A bell rings once, somewhere below."] }],
+            "else": [{ "message": ["Nothing moves."] }]
+          }
+        }
+      ],
+      "variants": [
+        {
+          "when": { "flag": "trusted" },
+          "title": "The Hall, Warmer",
+          "body": ["The room has decided about you."]
+        }
+      ],
+      "choices": [
+        { "text": "Step into the workshop", "to": "workshop" },
+        {
+          "text": "Use the brass key",
+          "to": "cellar",
+          "id": "unlock",
+          "once": true,
+          "enabled_when": { "has_item": "brass_key" },
+          "locked_hint": "you would need something small and metal",
+          "effects": [{ "set": { "trusted": true } }]
+        },
+        {
+          "text": "Ask about the tide",
+          "to": "tide_table",
+          "when": {
+            "all": [
+              { "var": "mood", "is": "wary" },
+              { "not": { "visited": "tide_table" } }
+            ]
+          }
+        },
+        {
+          "text": "Count the lamps",
+          "to": "lamps",
+          "when": {
+            "any": [
+              { "var": "lamps_lit", "at_least": 3 },
+              { "visits": { "scene": "hall", "at_least": 2 } }
+            ]
+          }
+        }
+      ]
+    },
+
+    "workshop": {
+      "title": "The Workshop",
+      "body": ["Tools, hung in order, none of them used recently."],
+      "on_enter": [{ "take": "brass_key" }],
+      "choices": [{ "text": "Back to the hall", "to": "hall" }]
+    },
+
+    "locked_door": {
+      "title": "The Locked Door",
+      "body": ["It does not move."],
+      "choices": [
+        { "text": "Force it", "to": "fall" },
+        { "text": "Go back", "to": "hall" }
+      ]
+    },
+
+    "fall": {
+      "title": "Down",
+      "on_enter": [
+        { "message": ["The stair gives way."] },
+        { "goto": "cellar" }
+      ]
+    },
+
+    "cellar": {
+      "title": "The Cellar",
+      "pace": "slow",
+      "body": ["Cold air, and a smell of oil."],
+      "on_enter": [
+        {
+          "chance": {
+            "p": 0.5,
+            "then": [
+              { "take": "oil_can" },
+              { "message": ["An oil can, half full, behind the stair."] }
+            ],
+            "_why": "The else branch is written in the object form on purpose: the fixture is what proves the schema still has the shape. Both forms of a message appear above and below, because the plain one is what every story written before messages could carry a register still uses.",
+            "else": [
+              {
+                "message": [
+                  { "text": "Only grit behind the stair.", "style": "aside", "pace": "fast" }
+                ]
+              }
+            ]
+          }
+        }
+      ],
+      "choices": [
+        {
+          "text": "Light the lamp",
+          "to": "lit",
+          "enabled_when": { "has_item": "oil_can" },
+          "locked_hint": "the lamp is dry",
+          "effects": [
+            { "drop": "oil_can" },
+            { "set": { "mood": "settled" } },
+            { "inc": { "lamps_lit": 2 } }
+          ]
+        },
+        { "text": "Climb back up", "to": "hall" }
+      ]
+    },
+
+    "lit": {
+      "title": "Lit",
+      "body": ["The wick catches, and the room becomes a room again."],
+      "ending": "steady_light"
+    },
+
+    "lamps": {
+      "title": "The Fifth Lamp",
+      "body": ["It has been out for three nights."],
+      "ending": "dark_tide"
+    },
+
+    "tide_table": {
+      "title": "The Tide Table",
+      "body": ["Numbers, and one name written in the margin."],
+      "choices": [{ "text": "Back to the hall", "to": "hall" }]
+    }
+  }
+}

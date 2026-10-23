@@ -1,0 +1,129 @@
+{
+  "format": "branchline.story",
+  "format_version": 1,
+
+  "_note": [
+    "A story built for *playing*, not for loading. `minimal_story.json` exercises",
+    "every corner of the schema, which makes it a poor thing to drive an engine",
+    "with: it has a Chance in the hall, so every run against it depends on the",
+    "seed, and its options shift underneath you as state changes.",
+    "",
+    "This one is deliberately small and completely deterministic -- no Chance",
+    "anywhere -- so a test can say 'take option 2' and mean it. Every structural",
+    "feature the engine has a rule about appears exactly once, and the prose is",
+    "written to be identified, not to be read."
+  ],
+
+  "start": "landing",
+
+  "meta": {
+    "title": "The Landing",
+    "author": "test fixture",
+    "subtitle": "a building with a cellar in it"
+  },
+
+  "variables": {
+    "trips": { "type": "int", "initial": 0, "label": "landings", "hud": true }
+  },
+
+  "items": {
+    "key": { "name": "Small Key", "description": "For a box, and only for a box." },
+    "lamp": { "name": "Brass Lamp", "description": "Heavy, and it still lights." }
+  },
+
+  "endings": {
+    "the_dark": {
+      "title": "The Dark",
+      "kind": "bitter",
+      "epilogue": ["The bottom of the stair, and no lamp to see it by."]
+    },
+    "the_open_box": {
+      "title": "The Open Box",
+      "kind": "warm",
+      "epilogue": ["Inside: a letter, and the letter is for you."]
+    }
+  },
+
+  "scenes": {
+    "landing": {
+      "title": "The Landing",
+      "pace": "normal",
+      "body": ["A landing, and three ways off it."],
+      "variants": [
+        {
+          "when": { "var": "trips", "at_least": 2 },
+          "title": "The Landing, Again",
+          "body": [{ "text": "You have stood here before.", "style": "aside" }],
+          "pace": "fast"
+        }
+      ],
+      "on_enter": [{ "inc": { "trips": 1 } }],
+      "choices": [
+        { "text": "Go through to the office", "to": "office" },
+        {
+          "text": "Open the strongbox",
+          "to": "strongbox",
+          "enabled_when": { "has_item": "key" },
+          "locked_hint": "the box wants something small and metal"
+        },
+        { "text": "Read the notice", "id": "notice", "once": true, "to": "notice" }
+      ]
+    },
+
+    "notice": {
+      "title": "The Notice",
+      "body": ["LIFT OUT OF ORDER. It has been out of order for a long time."],
+      "choices": [{ "text": "Back to the landing", "to": "landing" }]
+    },
+
+    "office": {
+      "title": "The Office",
+      "body": ["A desk, a drawer, and a lamp that someone left behind."],
+      "on_enter": [{ "take": ["key", "lamp"] }],
+      "choices": [
+        { "text": "Down to the cellar", "to": "cellar" },
+        { "text": "Back to the landing", "to": "landing" }
+      ]
+    },
+
+    "cellar": {
+      "title": "The Cellar Door",
+      "body": ["The stair down is narrow enough that you have to turn sideways."],
+      "choices": [
+        {
+          "text": "Start down",
+          "to": "first_step",
+          "effects": [{ "message": ["You go first, because there is nobody else."] }]
+        }
+      ]
+    },
+
+    "first_step": {
+      "title": "The First Step",
+      "on_enter": [
+        { "message": ["The first step holds."] },
+        { "goto": "second_step" }
+      ]
+    },
+
+    "second_step": {
+      "title": "The Second Step",
+      "on_enter": [
+        { "message": ["The second does not."] },
+        { "goto": "bottom" }
+      ]
+    },
+
+    "bottom": {
+      "title": "The Bottom",
+      "body": ["You arrive sooner than you meant to, and without the lamp."],
+      "ending": "the_dark"
+    },
+
+    "strongbox": {
+      "title": "The Strongbox",
+      "body": ["The key turns once, and the lid comes up on its own weight."],
+      "ending": "the_open_box"
+    }
+  }
+}
